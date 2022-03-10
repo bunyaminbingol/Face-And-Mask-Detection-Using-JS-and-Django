@@ -1,0 +1,14 @@
+<header>
+    <div class="navbar navbar-expand-sm bg-primary navbar-dark">
+        <a href="{% url 'index' %}" class="navbar-brand">Mask Detection</a>
+        <ul class="navbar-nav mr-auto">
+            <li 
+                {% if request.path == '/' %}
+                    class="nav-item active"
+                {% else %}
+                    class="nav-item"
+                {% endif %}
+            >
+        </ul>
+    </div>
+</header>

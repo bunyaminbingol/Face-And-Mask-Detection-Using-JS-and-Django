@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Maske Tespiti</h1>
+<video></video>
+<canvas width="500" height="500"></canvas>
+<button onclick="init()" type="button" class="btn btn-success">ÇALIŞTIR</button>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"
+    integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+<script>
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext("2d");
+
+    function gonder(data) {
+        axios.post("/deneme_json", {
+            data: data
+        },{
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        })
+        .then(response => {
+            const sonuc = response.data;
+            if (sonuc.status) {
+                const yuzKonum = sonuc.yuz_konum;
+                ctx.beginPath();
+                ctx.rect(yuzKonum.x, yuzKonum.y, yuzKonum.w, yuzKonum.h);
+                ctx.stroke();
+            }
+        });
+        /* axios({
+                url: "/deneme_json",
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: data,
+                
+            })
+            .then(response => {
+                const sonuc = response.data;
+                if (sonuc.status) {
+                    const yuzKonum = sonuc.yuz_konum;
+                    console.log(yuzKonum);
+                    ctx.beginPath();
+                    ctx.rect(50, 50, yuzKonum.x, yuzKonum.y);
+                    ctx.stroke();
+                }
+                console.log(response.data);
+            }); */
+    }
+
+    function init() {
+        var constraints = {
+            video: {
+                width: 640,
+                height: 480
+            }
+        };
+
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(function (mediaStream) {
+                var video = document.querySelector('video');
+                video.srcObject = mediaStream;
+                video.onloadedmetadata = function (e) {
+                    video.play();
+
+                    setInterval(() => {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const data = canvas.toDataURL();
+                        gonder(data);
+                    }, 1000 / 30)
+                };
+
+
+            })
+            .catch(function (err) {
+                console.log(err.name + ": " + err.message);
+            });
+    }
+</script>
+{% endblock %}
