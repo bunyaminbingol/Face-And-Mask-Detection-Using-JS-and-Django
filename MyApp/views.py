@@ -8,8 +8,15 @@ import numpy as np
 # Create your views here.
  
  
-def index(request):
-    return render(request, 'MyApp/index.html')
+
+def home(request):
+    return render(request, 'MyApp/home.html')
+ 
+def faceDetect(request):
+    return render(request, 'MyApp/faceDetect.html')
+
+def maskDetect(request):
+    return render(request, 'MyApp/maskDetect.html')
 
 def gen(camera):
     while True:
@@ -30,6 +37,7 @@ def image_process(request):
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = fase_cascade.detectMultiScale(gray, 1.3, 7)
+        print(faces)
         if len(faces) > 0:
             x = int(faces[0][0])
             y = int(faces[0][1])

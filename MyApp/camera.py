@@ -5,7 +5,6 @@ from imutils.video import VideoStream
 import imutils
 import cv2
 import os
-import urllib.request
 import numpy as np
 from django.conf import settings
 import time
